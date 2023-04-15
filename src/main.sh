@@ -14,14 +14,18 @@ OUTPUT_ZIP_NAME=${OUTPUT_ZIP_FILE_NAME:-"all.zip"}
 function compressBatch {
     for file in $@; do
 
-        # Check if file is a directory
-        #if [ -d $file ]; then
-        #    compress $file
-        #    continue
-        #fi
+        echo -e "----------------------------------------"
 
-        if [[ "$file" == "$COMPRESS_DIR_PATH/$OUTPUT_ZIP_NAME" ]]; then
-            echo "Skipping: $1"
+        if [ "$file" == "$COMPRESS_DIR_PATH/$OUTPUT_ZIP_NAME" ] || [ "$file" == "$COMPRESS_DIR_PATH" ]; then
+            echo "Skipping: $1 $COMPRESS_DIR_PATH/$OUTPUT_ZIP_NAME $COMPRESS_DIR_PATH"
+            continue
+        fi
+
+        #Check if file is a directory
+        if [ -d $file ]; then
+            echo -e "compressBatch() \t adding $file directory to the archive"
+
+            compress $file $COMPRESS_DIR_PATH
             continue
         fi
 
@@ -29,15 +33,14 @@ function compressBatch {
         uncompressed_size=$(du -s "$file" | awk '{print $1}')
         space_left=$(df "$COMPRESS_DIR_PATH" | tail -1 | awk '{print $4}')
 
-        # # try compression in the $COMPRESS_DIR_PATH directory
-        # if [ "$space_left" -ge $uncompressed_size ]; then
-        #     #echo "$file size: $uncompressed_size  < than $space_left. Adding directly to $COMPRESS_DIR_PATH/$OUTPUT_ZIP_NAME"
+        # try compression in the $COMPRESS_DIR_PATH directory
+        if [ "$space_left" -ge $uncompressed_size ]; then
+            echo -e "compressBatch() \tDirect compression $file size: $uncompressed_size < $space_left"
 
-        #     echo "compress $file $COMPRESS_DIR_PATH";
-        #     compress $file $COMPRESS_DIR_PATH
+            compress $file $COMPRESS_DIR_PATH
 
-        #     continue
-        # fi
+            continue
+        fi
 
         # try compression in the $COMPRESS_TMP_DIR_PATH directory
         space_left_tmp=$(df $COMPRESS_TMP_DIR_PATH | tail -1 | awk '{print $4}')
@@ -74,13 +77,13 @@ function compressBatch {
 			done
 
             # remove the original file that was moved to the tmp directory
-            rm "${file}"
+            rm -rf "${file}"
 
             compress "$COMPRESS_TMP_DIR_PATH$file" "$COMPRESS_TMP_DIR_PATH$COMPRESS_DIR_PATH"
 
             # remove temporary directories if they were created
-            echo -e "compressBatch() \trm -rf \"$COMPRESS_TMP_DIR_PATH/*\""
-            rm -rf "$COMPRESS_TMP_DIR_PATH/*"
+            echo -e "compressBatch() \trm -rf $COMPRESS_TMP_DIR_PATH/*"
+            rm -rf $COMPRESS_TMP_DIR_PATH/*
 
             continue
         fi
@@ -88,8 +91,11 @@ function compressBatch {
 }
 
 function compress {
+
     file_path="$1"
     top_dir="$2"
+
+    echo -e "#COMPRESS:\t$file_path $top_dir"
 
     relative_path=${file_path:${#top_dir}+1}
     
@@ -116,7 +122,7 @@ function compress {
     cd "$top_dir" && zip "$COMPRESS_DIR_PATH/$OUTPUT_ZIP_NAME" "$relative_path"
 
     # Remove file / directory after compression
-    rm "$file_path"
+    rm -rf $file_path
 }
 
 ######################
@@ -156,7 +162,9 @@ fi
 ######################
 
 files=$(find "$COMPRESS_DIR_PATH" -type f ! -size 0 -printf '%s %p\n' | sort -n -r | awk '{print $2}')
-
 compressBatch $files
+
+files_and_directories=$(find "$COMPRESS_DIR_PATH" -printf '%d %p\n' | sort -n -r | awk '{print $2}')
+compressBatch $files_and_directories
 
 #echo -e "$files"
