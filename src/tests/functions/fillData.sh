@@ -55,18 +55,18 @@ function fillData {
     mkdir           /mnt/limited_dir_5M/lvl1/lvl2
     chown 1234:1234 /mnt/limited_dir_5M/lvl1/lvl2
 
-    mkdir           /mnt/limited_dir_5M/lvl1/lvl2/lvl3
-    chown 1234:1234 /mnt/limited_dir_5M/lvl1/lvl2/lvl3
-    chmod 422       /mnt/limited_dir_5M/lvl1/lvl2/lvl3
+    mkdir           "/mnt/limited_dir_5M/lvl1/lvl2/lvl3 with spaces "
+    chown 1234:1234 "/mnt/limited_dir_5M/lvl1/lvl2/lvl3 with spaces "
+    chmod 422       "/mnt/limited_dir_5M/lvl1/lvl2/lvl3 with spaces "
 
-    dd if=/dev/zero of=/mnt/limited_dir_5M/lvl1/lvl2/lvl3/file1.txt bs=2M count=1
+    dd if=/dev/zero of="/mnt/limited_dir_5M/lvl1/lvl2/lvl3 with spaces /file1 with spaces .txt" bs=2M count=1
     dd if=/dev/zero of=/mnt/limited_dir_5M/lvl1/lvl2/file2.txt bs=2M count=1
 
-    touch /mnt/limited_dir_5M/lvl1/empty-file1.txt
+    touch "/mnt/limited_dir_5M/lvl1/empty file1.txt"
     touch /mnt/limited_dir_5M/lvl1/empty-file2.txt
     touch /mnt/limited_dir_5M/lvl1/empty-file3.txt
 
-    chmod 777 /mnt/limited_dir_5M/lvl1/lvl2/lvl3/file1.txt 
+    chmod 777 "/mnt/limited_dir_5M/lvl1/lvl2/lvl3 with spaces /file1 with spaces .txt"
     chmod 744 /mnt/limited_dir_5M/lvl1/lvl2/file2.txt 
 
     ## create the rest of files to fill in all inodes

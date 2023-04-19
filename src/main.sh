@@ -76,8 +76,8 @@ function moveFileToTemp {
 }
 
 function compressBatch {
-    for file in $@; do
 
+    while IFS= read -r file; do
         echo -e "----------------------------------------"
 
         if [ "$file" == "$COMPRESS_DIR_PATH/$OUTPUT_ZIP_NAME" ] || [ "$file" == "$COMPRESS_DIR_PATH" ]; then
@@ -86,22 +86,23 @@ function compressBatch {
         fi
 
         #Check if file is a directory
-        if [ -d $file ]; then
+        if [ -d "$file" ]; then
             echo -e "compressBatch() \t adding $file directory to the archive"
 
-            compress $file $COMPRESS_DIR_PATH
+            compress "$file" $COMPRESS_DIR_PATH
             continue
         fi
 
         # Check if there's enough space in $COMPRESS_DIR_PATH
         uncompressed_size=$(du -s "$file" | awk '{print $1}')
+
         space_left=$(df "$COMPRESS_DIR_PATH" | tail -1 | awk '{print $4}')
 
         # try compression in the $COMPRESS_DIR_PATH directory
         if [ "$space_left" -ge $uncompressed_size ]; then
             echo -e "compressBatch() \tDirect compression $file size: $uncompressed_size < $space_left"
 
-            compress $file $COMPRESS_DIR_PATH
+            compress "$file" $COMPRESS_DIR_PATH
 
             continue
         fi
@@ -111,7 +112,7 @@ function compressBatch {
 
         echo "space left TMP: $space_left_tmp"
         if [ "$space_left_tmp" -ge $uncompressed_size ] && [[ $COMPRESS_DIR_FREE_INODES -gt 5 ]]; then
-            moveFileToTemp $file $COMPRESS_TMP_DIR_PATH
+            moveFileToTemp "$file" $COMPRESS_TMP_DIR_PATH
             continue
         fi
 
@@ -122,18 +123,17 @@ function compressBatch {
         # try compression in the $COMPRESS_TMP_DIR_PATH directory
         space_left_tmp=$(df $RAM_TMP_DIR_PATH | tail -1 | awk '{print $4}')
         if [ "$space_left_tmp" -ge $uncompressed_size ]; then
-            moveFileToTemp $file $RAM_TMP_DIR_PATH
+            moveFileToTemp "$file" $RAM_TMP_DIR_PATH
             continue
         fi
 
         echo "$file (${uncompressed_size}b) cannot be compressed. Not ehough space left in the ${COMPRESS_DIR_PATH} directory, $COMPRESS_TMP_DIR_PATH and RAM drive"
         exit 1
 
-    done
+    done <<< "$1"
 }
 
 function compress {
-
     file_path="$1"
     top_dir="$2"
 
@@ -230,10 +230,8 @@ fi
 ### VALIDATE
 ######################
 
-files=$(find "$COMPRESS_DIR_PATH" -type f ! -size 0 -printf '%s %p\n' | sort -n -r | awk '{print $2}')
-compressBatch $files
+files=$(find "$COMPRESS_DIR_PATH" -type f ! -size 0 -printf '%s %p\n' | sort -n -r | sed "s/^[0-9]* //")
+compressBatch "$files"
 
-files_and_directories=$(find "$COMPRESS_DIR_PATH" -printf '%d %p\n' | sort -n -r | awk '{print $2}')
-compressBatch $files_and_directories
-
-#echo -e "$files"
+files_and_directories=$(find "$COMPRESS_DIR_PATH" -printf '%d %p\n' | sort -n -r | sed "s/^[0-9]* //")
+compressBatch "$files_and_directories"
