@@ -14,4 +14,4 @@ jobs:
 
     - name: Test compression + RAM
       shell: sh
-      run: ./src/tests/filesystem-ram.sh
+      run: cd ./src/tests && ./filesystem-ram.sh
