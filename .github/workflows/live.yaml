@@ -2,7 +2,7 @@ name: live ssh deployment
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 jobs:
   run-tests:
