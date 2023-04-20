@@ -8,20 +8,15 @@ mkdir /tmp/mnt-limited_dir_5M/
 
 
 mkdir           /tmp/mnt-limited_dir_5M/empty-dir
-chown 1235:1235 /tmp/mnt-limited_dir_5M/empty-dir/
 
 mkdir           /tmp/mnt-limited_dir_5M/lvl1
-chown 1234:1234 /tmp/mnt-limited_dir_5M/lvl1/
 
 mkdir           /tmp/mnt-limited_dir_5M/lvl1/empty-dir
-chown 1236:1236 /tmp/mnt-limited_dir_5M/lvl1/empty-dir/
 
 
 mkdir           /tmp/mnt-limited_dir_5M/lvl1/lvl2
-chown 1234:1234 /tmp/mnt-limited_dir_5M/lvl1/lvl2
 
 mkdir           "/tmp/mnt-limited_dir_5M/lvl1/lvl2/lvl3 with spaces "
-chown 1234:1234 "/tmp/mnt-limited_dir_5M/lvl1/lvl2/lvl3 with spaces "
 chmod 422       "/tmp/mnt-limited_dir_5M/lvl1/lvl2/lvl3 with spaces "
 
 dd if=/dev/zero of="/tmp/mnt-limited_dir_5M/lvl1/lvl2/lvl3 with spaces /file1 with spaces .txt" bs=2M count=1
