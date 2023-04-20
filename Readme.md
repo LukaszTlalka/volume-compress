@@ -8,7 +8,7 @@ This project is designed to compress files within a specified directory and remo
 The project is designed to be executed using docker:
 
 ```
-docker run -ti --rm -v "./data:/compress" volume-compress
+docker run -ti --rm -v "./data:/compress" lukasztlalka/volume-compress:latest
 ```
 
 - `data`: directory you want to compress and delete the files from
