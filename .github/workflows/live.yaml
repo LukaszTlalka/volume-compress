@@ -6,8 +6,8 @@ on:
 
 jobs:
   run-tests:
-    name: Deploy
-    runs-on: alpine:latest
+    name: Test compressions
+    runs-on: alpine-latest
 
     steps:
     - uses: actions/checkout@v3
