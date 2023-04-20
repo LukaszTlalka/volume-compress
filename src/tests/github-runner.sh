@@ -17,10 +17,9 @@ mkdir           /tmp/mnt-limited_dir_5M/lvl1/empty-dir
 mkdir           /tmp/mnt-limited_dir_5M/lvl1/lvl2
 
 mkdir           "/tmp/mnt-limited_dir_5M/lvl1/lvl2/lvl3 with spaces "
-chmod 422       "/tmp/mnt-limited_dir_5M/lvl1/lvl2/lvl3 with spaces "
 
-echo "data" > "/tmp/mnt-limited_dir_5M/lvl1/lvl2/lvl3 with spaces /file1 with spaces .txt"
-echo "more data" > /tmp/mnt-limited_dir_5M/lvl1/lvl2/file2.txt
+dd if=/dev/zero of="/mnt/limited_dir_5M/lvl1/lvl2/lvl3 with spaces /file1 with spaces .txt" bs=2M count=1
+dd if=/dev/zero of=/mnt/limited_dir_5M/lvl1/lvl2/file2.txt bs=2M count=1
 
 touch "/tmp/mnt-limited_dir_5M/lvl1/empty file1.txt"
 touch /tmp/mnt-limited_dir_5M/lvl1/empty-file2.txt
@@ -28,7 +27,7 @@ touch /tmp/mnt-limited_dir_5M/lvl1/empty-file3.txt
 
 chmod 777 "/tmp/mnt-limited_dir_5M/lvl1/lvl2/lvl3 with spaces /file1 with spaces .txt"
 chmod 744 /tmp/mnt-limited_dir_5M/lvl1/lvl2/file2.txt 
-
+chmod 422 "/tmp/mnt-limited_dir_5M/lvl1/lvl2/lvl3 with spaces "
 
 
 #################################################
