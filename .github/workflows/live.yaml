@@ -14,4 +14,4 @@ jobs:
 
     - name: Test compression
       shell: sh
-      run: cd ./src/tests && ./gitlab-runner.sh
+      run: cd ./src/tests && ./github-runner.sh
