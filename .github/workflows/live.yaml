@@ -12,6 +12,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Test compression + RAM
+    - name: Test compression
       shell: sh
-      run: cd ./src/tests && ./filesystem-ram.sh
+      run: cd ./src/tests && ./gitlab-runner.sh
