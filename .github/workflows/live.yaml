@@ -15,6 +15,6 @@ jobs:
     - name: Build Docker image
       run: echo "RUN apk add coreutils" >> Dockerfile && docker build -t test-image .
 
-    - name: Test compression
+    - name: Test compression TMP
       run: |
-        docker run --rm -v $(pwd):/app test-image sh -c "cd /app/src/tests && ./github-runner.sh"
+        docker run --rm -v $(pwd):/app test-image sh -c "cd /app/src/tests && ./filesystem-tmp.sh"
